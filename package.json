@@ -11,6 +11,13 @@
   },
   "dependencies": {
     "@pinia/nuxt": "^0.5.5",
-    "nuxt": "^3.13.2"
+    "normalize.css": "^8.0.1",
+    "nuxt": "^3.13.2",
+    "pinia": "^2.2.4",
+    "vue": "latest",
+    "vue-router": "latest"
+  },
+  "devDependencies": {
+    "sass": "^1.80.4"
   }
 }
