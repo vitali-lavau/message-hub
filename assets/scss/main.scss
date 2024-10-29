@@ -1,5 +1,8 @@
 @use "variables" as *;
 @use "fonts" as *;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 * {
   box-sizing: border-box;

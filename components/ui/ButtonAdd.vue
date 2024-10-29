@@ -1,5 +1,5 @@
 <template>
-    <button class="btn-add">
+    <button class="btn-add flex items-center">
         <span>{{ props.label }}</span>
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
             <path fill-rule="evenodd" clip-rule="evenodd"
@@ -22,8 +22,6 @@ const props = defineProps<ButtonAddProps>();
 @use "assets/scss/variables" as *;
 
 .btn-add {
-    display: flex;
-    align-items: center;
     padding: 0;
     background-color: transparent;
     border: none;

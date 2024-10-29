@@ -1,6 +1,6 @@
 <template>
     <div
-        class="channel-item"
+        class="channel-item flex"
         :class="{ 'channel-item--active': isActive }"
         @click="$emit('setActive')"
     >
@@ -23,7 +23,6 @@ defineProps<ChannelItemProps & { isActive: boolean }>();
 
 .channel-item {
     width: 100%;
-    display: flex;
     cursor: pointer;
 
     &__name {

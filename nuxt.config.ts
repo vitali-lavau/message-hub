@@ -7,4 +7,19 @@ export default defineNuxtConfig({
         'normalize.css',
         '@/assets/scss/main.scss'
     ],
+    postcss: {
+        plugins: {
+            tailwindcss: {},
+            autoprefixer: {},
+        },
+    },
+    vite: {
+        css: {
+            preprocessorOptions: {
+                scss: {
+                    api: 'modern-compiler',
+                }
+            }
+        }
+    },
 })

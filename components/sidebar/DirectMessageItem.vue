@@ -1,6 +1,6 @@
 <template>
     <div
-        class="direct-message-item"
+        class="direct-message-item flex"
         :class="{ 'direct-message-item--active': isActive }"
         @click="$emit('setActive')"
     >
@@ -30,7 +30,6 @@ defineProps<DirectMessageItemProps & { isActive: boolean }>();
 
 .direct-message-item {
     width: 100%;
-    display: flex;
     cursor: pointer;
 
     &__name {

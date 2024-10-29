@@ -1,6 +1,6 @@
 <template>
     <div class="channels">
-        <div class="channels__head">
+        <div class="channels__head flex items-center justify-between">
             <h2 class="channels__title subtitle">Channels</h2>
             <ButtonAdd label="Add"/>
         </div>
@@ -55,9 +55,6 @@ function setActiveChannel(id: number) {
 .channels {
 
     &__head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
         margin: 0 0 $spacing-lg;
     }
 

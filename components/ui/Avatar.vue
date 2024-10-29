@@ -1,6 +1,6 @@
 <template>
     <div
-        class="avatar"
+        class="avatar flex items-center justify-center"
         :style="{ backgroundColor: imageUrl ? 'transparent' : bgColor || 'var(--color-primary)' }"
     >
         <template v-if="imageUrl">
@@ -37,9 +37,6 @@ const initials = computed(() => {
 .avatar {
     width: 42px;
     height: 42px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     border-radius: 30px;
     overflow: hidden;
 

@@ -1,14 +1,14 @@
 <template>
-    <aside class="sidebar">
+    <aside class="sidebar flex flex-col">
         <UserSearch/>
         <ChannelsList
-            class="section"
+            class="section flex flex-col"
             :activeChannelId="activeChannelId"
             @setActiveChannel="setActiveChannel"
             :activeMessageId="activeMessageId"
         />
         <DirectMessages
-            class="section"
+            class="section flex flex-col"
             :activeMessageId="activeMessageId"
             @setActiveMessage="setActiveMessage"
             :activeChannelId="activeChannelId"
@@ -41,8 +41,6 @@ function setActiveMessage(id: number) {
 .sidebar {
     width: 340px;
     height: 100%;
-    display: flex;
-    flex-direction: column;
     padding: $spacing-lg $spacing-xl;
     flex-shrink: 0;
     background-color: $color-white;
@@ -56,8 +54,6 @@ function setActiveMessage(id: number) {
 
     .section {
         flex: 1 1 40%;
-        display: flex;
-        flex-direction: column;
         overflow: hidden;
     }
 }

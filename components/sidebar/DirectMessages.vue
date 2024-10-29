@@ -1,6 +1,6 @@
 <template>
     <div class="direct-messages">
-        <div class="direct-messages__head">
+        <div class="direct-messages__head flex items-center justify-between">
             <h2 class="direct-messages__title subtitle">Direct messages</h2>
             <ButtonAddDirectMessage/>
         </div>
@@ -61,9 +61,6 @@ function setActiveMessage(id: number) {
 .direct-messages {
 
     &__head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
         margin: 0 0 $spacing-lg;
     }
 
