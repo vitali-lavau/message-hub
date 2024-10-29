@@ -1,7 +1,30 @@
 @use "variables" as *;
+@use "fonts" as *;
 
 * {
   box-sizing: border-box;
+}
+
+body {
+  font-family: $font-family-base;
+  font-weight: $font-weight-normal;
+  font-size: $font-size-sm;
+  line-height: $line-height-base;
+}
+
+input {
+  padding: $spacing-sm $spacing-md;
+  background-color: $color-background-gray;
+  border-radius: $border-radius-min;
+  font-size: $font-size-min;
+  color: $color-secondary;
+  line-height: $line-height-lg;
+  outline: none;
+  border: none;
+
+  &::placeholder {
+    color: $color-gray;
+  }
 }
 
 .app {
@@ -10,4 +33,32 @@
   display: flex;
   padding: $spacing-lg $spacing-xl;
   background-color: $color-background;
+}
+
+.subtitle {
+  margin: 0;
+  color: $color-text;
+  font-size: $font-size-max;
+  font-weight: $font-weight-semibold;
+}
+
+.img-responsive {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 2px;
+  background-color: $color-border;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 2px;
+  border: 1px solid $color-border;
 }
