@@ -22,11 +22,6 @@ const props = defineProps<ButtonAddProps>();
 @use "assets/scss/variables" as *;
 
 .btn-add {
-    padding: 0;
-    background-color: transparent;
-    border: none;
-    outline: none;
-    cursor: pointer;
 
     span {
         color: $color-secondary;

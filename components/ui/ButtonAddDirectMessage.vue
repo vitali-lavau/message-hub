@@ -22,11 +22,6 @@
     height: 20px;
     display: flex;
     align-items: center;
-    padding: 0;
-    background-color: transparent;
-    border: none;
-    outline: none;
-    cursor: pointer;
     transform: translateZ(0);
     transition: transform .4s ease;
 

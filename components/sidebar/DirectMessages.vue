@@ -25,7 +25,6 @@ import ButtonAddDirectMessage from "~/components/ui/ButtonAddDirectMessage.vue";
 
 defineProps<{
     activeMessageId: number | null;
-    activeChannelId: number | null;
 }>();
 
 const emit = defineEmits<{
@@ -52,7 +51,6 @@ const sortedMessages = computed(() => {
 function setActiveMessage(id: number) {
     emit('setActiveMessage', id);
 }
-
 </script>
 
 <style scoped lang="scss">

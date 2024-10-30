@@ -10,7 +10,6 @@
                 v-for="channel in channels"
                 :key="channel.id"
                 :name="channel.name"
-                :imageUrl="channel.imageUrl"
                 :isActive="channel.id === activeChannelId"
                 @click="setActiveChannel(channel.id)"
             />
@@ -24,7 +23,7 @@ import ChannelItem from "~/components/sidebar/ChannelItem.vue";
 
 defineProps<{
     activeChannelId: number | null;
-    activeMessageId: number | null;
+    activeMessageId?: number | null;
 }>();
 
 const emit = defineEmits<{
@@ -32,16 +31,16 @@ const emit = defineEmits<{
 }>();
 
 const channels = [
-    { id: 1, name: "General Discussion", imageUrl: "" },
-    { id: 2, name: "Announcements", imageUrl: "/images/channels/announcements.png" },
-    { id: 3, name: "Project Updates", imageUrl: "" },
-    { id: 4, name: "Marketing Team Insights", imageUrl: "/images/channels/marketing.png" },
-    { id: 5, name: "Design Team", imageUrl: "" },
-    { id: 6, name: "Technical Support and Issues", imageUrl: "/images/channels/support.png" },
-    { id: 7, name: "Customer Success Stories", imageUrl: "" },
-    { id: 8, name: "Random Thoughts and Ideas", imageUrl: "" },
-    { id: 9, name: "Sales", imageUrl: "/images/channels/sales.png" },
-    { id: 10, name: "HR Announcements and Policies", imageUrl: "" }
+    {id: 1, name: "General Discussion"},
+    {id: 2, name: "Announcements"},
+    {id: 3, name: "Project Updates"},
+    {id: 4, name: "Marketing Team Insights"},
+    {id: 5, name: "Design Team"},
+    {id: 6, name: "Technical Support and Issues"},
+    {id: 7, name: "Customer Success Stories"},
+    {id: 8, name: "Random Thoughts and Ideas"},
+    {id: 9, name: "Sales"},
+    {id: 10, name: "HR Announcements and Policies"}
 ];
 
 function setActiveChannel(id: number) {

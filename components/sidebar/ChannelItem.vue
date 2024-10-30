@@ -4,16 +4,14 @@
         :class="{ 'channel-item--active': isActive }"
         @click="$emit('setActive')"
     >
-        <Avatar :name="name" :imageUrl="imageUrl" />
         <div class="channel-item__name">
-            {{ name }}
+            # {{ name }}
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import type {ChannelItemProps} from "~/types/ChannelItemProps";
-import Avatar from "~/components/ui/Avatar.vue";
 
 defineProps<ChannelItemProps & { isActive: boolean }>();
 </script>

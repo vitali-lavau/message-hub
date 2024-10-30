@@ -4,14 +4,12 @@
         <ChannelsList
             class="section flex flex-col"
             :activeChannelId="activeChannelId"
-            @setActiveChannel="setActiveChannel"
-            :activeMessageId="activeMessageId"
+            @setActiveChannel="$emit('setActiveChannel', $event)"
         />
         <DirectMessages
             class="section flex flex-col"
             :activeMessageId="activeMessageId"
-            @setActiveMessage="setActiveMessage"
-            :activeChannelId="activeChannelId"
+            @setActiveMessage="$emit('setActiveMessage', $event)"
         />
     </aside>
 </template>
@@ -21,18 +19,15 @@ import UserSearch from "~/components/sidebar/UserSearch.vue";
 import ChannelsList from "~/components/sidebar/ChannelsList.vue";
 import DirectMessages from "~/components/sidebar/DirectMessages.vue";
 
-const activeChannelId = ref<number | null>(null);
-const activeMessageId = ref<number | null>(null);
+defineProps<{
+    activeChannelId: number | null;
+    activeMessageId: number | null;
+}>();
 
-function setActiveChannel(id: number) {
-    activeChannelId.value = id;
-    activeMessageId.value = null;
-}
-
-function setActiveMessage(id: number) {
-    activeMessageId.value = id;
-    activeChannelId.value = null;
-}
+defineEmits<{
+    (e: 'setActiveChannel', id: number): void;
+    (e: 'setActiveMessage', id: number): void;
+}>();
 </script>
 
 <style scoped lang="scss">
