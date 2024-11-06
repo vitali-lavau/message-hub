@@ -22,4 +22,9 @@ export default defineNuxtConfig({
             }
         }
     },
+    vue: {
+        compilerOptions: {
+            isCustomElement: (tag) => tag === 'emoji-picker'
+        }
+    }
 })

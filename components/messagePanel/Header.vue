@@ -2,13 +2,13 @@
     <div class="message-header flex justify-between items-center">
         <div class="message-header__title">{{ title }}</div>
         <ChannelMembers v-if="members && members.length" :members="members" />
-        <MenuButton/>
+        <DropdownMembers/>
     </div>
 </template>
 
 <script setup lang="ts">
 import ChannelMembers from "~/components/messagePanel/ChannelMembers.vue";
-import MenuButton from "~/components/ui/MenuButton.vue";
+import DropdownMembers from "~/components/ui/DropdownMembers.vue";
 
 defineProps<{
     title: string;
