@@ -11,11 +11,25 @@
                 <span class="message-item__timestamp">{{ formatDateTime(message.timestamp) }}</span>
             </div>
 
-            <div class="message-item__content">{{ message.content }}</div>
+            <div class="message-item__content" @dblclick="enableEdit">
+                <template v-if="isEditing">
+                    <input
+                        v-model="editableContent"
+                        @blur="saveEdit"
+                        @keyup.enter="saveEdit"
+                        type="text"
+                        class="message-item__input"
+                        autofocus
+                    />
+                </template>
+                <template v-else>
+                    {{ message.content }}
+                </template>
+            </div>
 
             <div class="message-item__reactions flex items-center">
                 <ReactionButton
-                    v-for="(count, emoji) in reactions"
+                    v-for="(count, emoji) in message.reactions"
                     :key="emoji"
                     :emoji="emoji as string"
                     :count="count"
@@ -24,7 +38,7 @@
             </div>
 
             <MessageActions
-                @edit="handleEdit"
+                @edit="enableEdit"
                 @delete="handleDelete"
                 class="flex flex-col"
             />
@@ -44,29 +58,37 @@ const props = defineProps<{
     currentUser: string;
 }>();
 
-const isMine = computed(() => props.message.sender === props.currentUser);
-
 const emit = defineEmits(['editMessage', 'deleteMessage']);
 
-const handleEdit = () => {
-    emit('editMessage', props.message);
+const isMine = computed(() => props.message.sender === props.currentUser);
+const isEditing = ref(false);
+const editableContent = ref(props.message.content);
+
+const enableEdit = () => {
+    isEditing.value = true;
+    editableContent.value = props.message.content;
+};
+
+const saveEdit = () => {
+    if (editableContent.value !== props.message.content) {
+        const updatedMessage = {
+            ...props.message,
+            content: editableContent.value
+        };
+        emit('editMessage', updatedMessage);
+    }
+    isEditing.value = false;
 };
 
 const handleDelete = () => {
     emit('deleteMessage', props.message);
 };
 
-const reactions = reactive<{ [key: string]: number }>({
-    '😍': 3,
-    '👍': 1,
-    '😂': 2
-});
-
 const increaseReaction = (emoji: string) => {
-    if (reactions[emoji] !== undefined) {
-        reactions[emoji]++;
+    if (props.message.reactions[emoji] != undefined) {
+        props.message.reactions[emoji]++;
     } else {
-        reactions[emoji] = 1;
+        props.message.reactions[emoji] = 1;
     }
 };
 </script>
@@ -89,6 +111,7 @@ const increaseReaction = (emoji: string) => {
 
     &__inner {
         position: relative;
+        flex: 1;
         padding: $spacing-m 60px $spacing-xl $spacing-lg;
         border-radius: 10px;
         background: $color-info-light;
@@ -123,6 +146,10 @@ const increaseReaction = (emoji: string) => {
         > div:not(:last-child) {
             margin-right: $spacing-m;
         }
+    }
+
+    &__input {
+        width: 100%;
     }
 
     .message-actions {

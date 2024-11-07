@@ -2,54 +2,90 @@
     <div class="direct-messages">
         <div class="direct-messages__head flex items-center justify-between">
             <h2 class="direct-messages__title subtitle">Direct messages</h2>
-            <ButtonAddDirectMessage/>
+            <ButtonAddDirectMessage @click="openModal" />
         </div>
 
         <div class="direct-messages__list">
             <DirectMessageItem
-                v-for="message in sortedMessages"
+                v-for="message in chatStore.filteredAndSortedContacts"
                 :key="message.id"
+                :id="message.id"
                 :name="message.name"
                 :imageUrl="message.imageUrl"
                 :unreadCount="message.unreadCount"
-                :isActive="message.id === activeMessageId"
-                @click="setActiveMessage(message.id)"
+                :chatId="message.chatId"
+                :isActive="activeItem?.type === 'directMessage' && activeItem?.id === message.id"
+                @click="setActiveItem('directMessage', message.id)"
             />
         </div>
+
+        <ModalBase
+            :open="isModalOpen"
+            @close="closeModal"
+            :showHeader="false"
+            :showBody="true"
+            :showFooter="false"
+            :bodyMarginBottom="0"
+        >
+            <template #body>
+                <WriteTo/>
+                <ButtonBase
+                    @click="closeModal"
+                    label="Cancel"
+                    hidden
+                />
+            </template>
+        </ModalBase>
     </div>
 </template>
 
 <script setup lang="ts">
 import DirectMessageItem from "~/components/sidebar/DirectMessageItem.vue";
 import ButtonAddDirectMessage from "~/components/ui/ButtonAddDirectMessage.vue";
+import {useChatStore} from "~/stores/chatStore";
+import ModalBase from "~/components/modals/ModalBase.vue";
+import ButtonBase from "~/components/ui/ButtonBase.vue";
+import WriteTo from "~/components/modals/WriteTo.vue";
 
-defineProps<{
-    activeMessageId: number | null;
+const chatStore = useChatStore();
+const isModalOpen = ref(false);
+
+onMounted(() => {
+    chatStore.loadUserMessages();
+    chatStore.loadUserChannels();
+});
+
+const props = defineProps<{
+    searchQuery: string;
+    activeItem: { type: string; id: string | number } | null;
 }>();
 
 const emit = defineEmits<{
-    (e: 'setActiveMessage', id: number): void;
+    (e: 'setActiveItem', type: 'directMessage', id: string | number): void;
 }>();
 
-const messages = [
-    { id: 1, name: "Emily Clark", imageUrl: "/images/users/emily.png", unreadCount: 3 },
-    { id: 2, name: "James Anderson", imageUrl: "/images/users/james.png" },
-    { id: 3, name: "Sophia Turner", imageUrl: "/images/users/sophia.png", unreadCount: 5 },
-    { id: 4, name: "Liam Wilson", imageUrl: "" },
-    { id: 5, name: "Olivia Brown", imageUrl: "/images/users/olivia.png" },
-    { id: 6, name: "Noah Martinez", imageUrl: "" },
-    { id: 7, name: "Ava Garcia", imageUrl: "/images/users/ava.png" },
-    { id: 8, name: "Mason Lee", imageUrl: "", unreadCount: 2 },
-    { id: 9, name: "Isabella White", imageUrl: "" },
-    { id: 10, name: "Lucas Hall", imageUrl: "/images/users/lucas.png" }
-];
+function setActiveItem(type: 'directMessage', id: string | number) {
+    emit('setActiveItem', type, id);
 
-const sortedMessages = computed(() => {
-    return [...messages].sort((a, b) => (b.unreadCount || 0) - (a.unreadCount || 0));
-});
+    chatStore.setActiveChat(Number(id));
+    chatStore.setActiveUser(Number(id));
+    console.log("История сообщений для чата:", chatStore.activeMessages);
+}
 
-function setActiveMessage(id: number) {
-    emit('setActiveMessage', id);
+watch(
+    () => props.searchQuery,
+    (newQuery) => {
+        chatStore.setSearchQuery(newQuery)
+    },
+    { immediate: true }
+)
+
+function openModal() {
+    isModalOpen.value = true;
+}
+
+function closeModal() {
+    isModalOpen.value = false;
 }
 </script>
 

@@ -1,7 +1,8 @@
 <template>
     <label class="search">
         <input
-            type="search"
+            @input="onInput"
+            type="text"
             class="search__input input"
             placeholder="Search..."
         />
@@ -9,7 +10,12 @@
 </template>
 
 <script setup lang="ts">
+const emit = defineEmits(['updateSearch']);
 
+function onInput(event: Event) {
+    const target = event.target as HTMLInputElement;
+    emit('updateSearch', target.value);
+}
 </script>
 
 <style scoped lang="scss">

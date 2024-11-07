@@ -4,4 +4,6 @@ export interface Message {
     content: string;
     timestamp: Date | string;
     avatarUrl: string;
+    reactions: Record<string, number>;
+    chatId: number;
 }

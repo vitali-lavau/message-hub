@@ -1,8 +1,8 @@
 <template>
     <div
         class="channel-item flex"
-        :class="{ 'channel-item--active': isActive }"
-        @click="$emit('setActive')"
+        :class="{ 'channel-item--active': props.isActive }"
+        @click="$emit('click')"
     >
         <div class="channel-item__name">
             # {{ name }}
@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import type {ChannelItemProps} from "~/types/ChannelItemProps";
 
-defineProps<ChannelItemProps & { isActive: boolean }>();
+const props = defineProps<ChannelItemProps & { isActive?: boolean }>();
 </script>
 
 <style scoped lang="scss">

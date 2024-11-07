@@ -16,7 +16,7 @@ defineProps<{
 }>();
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 @use "assets/scss/variables" as *;
 
 .message-header {
@@ -36,8 +36,8 @@ defineProps<{
         margin-left: auto;
     }
 
-    .btn-dots {
-        margin-left: $spacing-xl;
+    .dropdown-members {
+        margin: 0 0 0 $spacing-xl;
     }
 }
 </style>

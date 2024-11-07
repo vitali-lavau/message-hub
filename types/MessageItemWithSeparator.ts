@@ -6,4 +6,5 @@ export interface MessageItemWithSeparator {
     id: string | number;
     type: typeof MessageItem | typeof DateSeparator;
     props: { message?: Message; currentUser?: string; date?: Date };
+    isDeleting?: boolean;
 }

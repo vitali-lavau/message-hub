@@ -1,4 +1,4 @@
-<template>
+<template xmlns="">
     <div class="message-input">
         <FileUploader
             :showButtonAttach="false"
@@ -45,7 +45,11 @@ import FileUploader from "~/components/ui/FileUploader.vue";
 import ButtonAttach from "~/components/ui/ButtonAttach.vue";
 import type {UploadedFile} from "~/types/UploadedFile";
 import ButtonSmile from "~/components/ui/ButtonSmile.vue";
+import { useChatStore } from '~/stores/chatStore';
+import { useUserStore } from '~/stores/userStore';
 
+const chatStore = useChatStore();
+const userStore = useUserStore();
 const editor = ref<Editor>();
 const fileUploader = ref<InstanceType<typeof FileUploader> | null>(null);
 const attachedFiles = ref<UploadedFile[]>([]);
@@ -71,12 +75,16 @@ onBeforeUnmount(() => {
 
 function sendMessage() {
     if (editor.value) {
-        const messageContent = editor.value.getHTML();
-        if (messageContent.trim() || attachedFiles.value.length) {
-            console.log('Message sent:', {
-                content: messageContent,
-                files: attachedFiles.value,
-            });
+        const plainText = editor.value.getText();
+
+        if (plainText.trim()) {
+            // Проверяем, активен ли чат с ботом
+            if (chatStore.activeChatId === chatStore.botChatId) {
+                chatStore.sendMessageToBot(plainText); // Отправляем сообщение боту
+            } else {
+                chatStore.addMessage(plainText, attachedFiles.value, userStore.user.name);
+            }
+
             editor.value.commands.clearContent();
             attachedFiles.value = [];
             fileUploader.value?.clearFiles();

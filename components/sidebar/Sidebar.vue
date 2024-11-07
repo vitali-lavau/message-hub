@@ -1,15 +1,17 @@
 <template>
     <aside class="sidebar flex flex-col">
-        <UserSearch/>
+        <UserSearch @updateSearch="updateSearchQuery"/>
         <ChannelsList
             class="section flex flex-col"
-            :activeChannelId="activeChannelId"
-            @setActiveChannel="$emit('setActiveChannel', $event)"
+            :searchQuery="searchQuery"
+            :activeItem="activeItem"
+            @setActiveItem="setActiveItem"
         />
         <DirectMessages
             class="section flex flex-col"
-            :activeMessageId="activeMessageId"
-            @setActiveMessage="$emit('setActiveMessage', $event)"
+            :searchQuery="searchQuery"
+            :activeItem="activeItem"
+            @setActiveItem="setActiveItem"
         />
     </aside>
 </template>
@@ -19,15 +21,16 @@ import UserSearch from "~/components/sidebar/UserSearch.vue";
 import ChannelsList from "~/components/sidebar/ChannelsList.vue";
 import DirectMessages from "~/components/sidebar/DirectMessages.vue";
 
-defineProps<{
-    activeChannelId: number | null;
-    activeMessageId: number | null;
-}>();
+const searchQuery = ref('');
+const activeItem = ref<{ type: 'channel' | 'directMessage'; id: string | number } | null>(null);
 
-defineEmits<{
-    (e: 'setActiveChannel', id: number): void;
-    (e: 'setActiveMessage', id: number): void;
-}>();
+function updateSearchQuery(query: string) {
+    searchQuery.value = query;
+}
+
+function setActiveItem(type: 'channel' | 'directMessage', id: string | number) {
+    activeItem.value = { type, id };
+}
 </script>
 
 <style scoped lang="scss">

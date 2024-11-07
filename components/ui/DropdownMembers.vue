@@ -1,6 +1,6 @@
 <template>
     <client-only>
-        <Menu as="div" class="relative inline-block text-left">
+        <Menu as="div" class="dropdown-members relative inline-block text-left">
             <div class="flex items-center">
                 <MenuButton class="btn-dots">
                     <svg width="7" height="27" viewBox="0 0 7 27" fill="none" xmlns="http://www.w3.org/2000/svg">
