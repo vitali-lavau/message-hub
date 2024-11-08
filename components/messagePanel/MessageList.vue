@@ -10,19 +10,25 @@
             :min-item-size="60"
         >
             <template #default="{ item, index, active }">
-                <DynamicScrollerItem
-                    :item="item"
-                    :index="index"
-                    :active="active"
+                <transition
+                    name="fade"
+                    mode="out-in"
+                    appear
                 >
-                    <component
-                        :is="item.type"
-                        v-bind="item.props"
-                        @editMessage="onEditMessage"
-                        @deleteMessage="onDeleteMessage"
-                        :class="{ 'deleting': item.isDeleting }"
-                    />
-                </DynamicScrollerItem>
+                    <DynamicScrollerItem
+                        :item="item"
+                        :index="index"
+                        :active="active"
+                    >
+                        <component
+                            :is="item.type"
+                            v-bind="item.props"
+                            @editMessage="onEditMessage"
+                            @deleteMessage="onDeleteMessage"
+                            :class="{ 'deleting': item.isDeleting }"
+                        />
+                    </DynamicScrollerItem>
+                </transition>
             </template>
         </DynamicScroller>
     </div>
