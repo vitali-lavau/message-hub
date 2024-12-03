@@ -1,5 +1,9 @@
+import type {Message} from "~/types/Message";
+
 export interface Channel {
-    id: number;
+    id: string;
     name: string;
-    members: number[];
+    type: string;
+    users?: { name: string; avatarUrl: string }[];
+    messages?: Message[];
 }

@@ -9,14 +9,17 @@
         </div>
 
         <div class="channels__list">
-            <ChannelItem
-                v-for="channel in filteredChannels"
-                :key="channel.id"
-                :id="channel.id"
-                :name="channel.name"
-                :isActive="activeItem?.type === 'channel' && activeItem?.id === channel.id"
-                @click="setActiveItem('channel', channel.id)"
-            />
+            <client-only>
+                <ChannelItem
+                    v-for="channel in filteredChannels"
+                    :key="channel.id"
+                    :channel="channel"
+                    :id="channel.id"
+                    :name="channel.name"
+                    :isActive="activeItem?.type === 'channel' && activeItem?.id === channel.id"
+                    @click="handleChannelItemClick(channel)"
+                />
+            </client-only>
         </div>
 
         <ModalBase
@@ -31,12 +34,13 @@
                 />
             </template>
             <template #body>
-                <AddMembers @update:selected-items="handleSelectedItems"/>
+                <AddMembers @updateSelectedUsers="updateSelectedUsers"/>
             </template>
             <template #footer>
                 <ButtonBase
                     @click="closeModal"
-                    label="Cancel"/>
+                    label="Cancel"
+                />
                 <ButtonPrimary
                     @click="createChannel"
                     label="Create"
@@ -48,27 +52,30 @@
 </template>
 
 <script setup lang="ts">
+import {useChannelsStore} from '@/stores/channelsStore';
+import {createChannel as sendCreateChannelRequest} from '@/services/websocketChannelService';
+import {useHeaderStore} from "~/stores/useHeaderStore";
+import {useParticipantsStore} from "~/stores/useParticipants";
 import ButtonAdd from "~/components/ui/ButtonAdd.vue";
 import ChannelItem from "~/components/sidebar/ChannelItem.vue";
 import ModalBase from "~/components/modals/ModalBase.vue";
 import InputName from "~/components/ui/InputName.vue";
-import AddMembers from "~/components/modals/AddMembers.vue";
-import {fetchChannels} from "~/services/channelService";
-import type {Channel} from "~/types/Channel";
-import {useUserStore} from "~/stores/userStore";
-import ButtonPrimary from "~/components/ui/ButtonPrimary.vue";
 import ButtonBase from "~/components/ui/ButtonBase.vue";
-import {useChatStore} from '~/stores/chatStore';
-
-const channels = ref<Channel[]>([]);
-const chatStore = useChatStore();
-const channelName = ref('');
-const selectedMembers = ref<number[]>([]);
+import ButtonPrimary from "~/components/ui/ButtonPrimary.vue";
+import AddMembers from "~/components/modals/AddMembers.vue";
+import type {Channel} from "~/types/Channel";
 
 const props = defineProps<{
     searchQuery: string;
     activeItem: { type: string; id: string | number } | null;
 }>()
+const channelsStore = useChannelsStore();
+const channels = computed(() => channelsStore.channels);
+const isModalOpen = ref(false);
+const channelName = ref('');
+const selectedUsers = ref<string[]>([]);
+const headerStore = useHeaderStore();
+const participantsStore = useParticipantsStore();
 
 const emit = defineEmits<{
     (e: 'setActiveItem', type: 'channel', id: string | number): void;
@@ -78,19 +85,11 @@ function setActiveItem(type: 'channel', id: string | number) {
     emit('setActiveItem', type, id);
 }
 
-onMounted(async () => {
-    const userStore = useUserStore();
-    const userId = userStore.user.id;
-    channels.value = await fetchChannels(userId);
-});
-
 const filteredChannels = computed(() => {
     return channels.value.filter(channel =>
         channel.name.toLowerCase().includes(props.searchQuery.toLowerCase())
     );
 });
-
-const isModalOpen = ref(false);
 
 function openModal() {
     isModalOpen.value = true;
@@ -99,23 +98,51 @@ function openModal() {
 function closeModal() {
     isModalOpen.value = false;
     channelName.value = '';
+    selectedUsers.value = [];
 }
 
-function handleSelectedItems(selectedItems: number[]) {
-    selectedMembers.value = selectedItems;
+function updateSelectedUsers(users: string[]) {
+    selectedUsers.value = users;
+    console.log('Selected Users:', users);
 }
 
 async function createChannel() {
-    if (!channelName.value) return;
+    if (!channelName.value) {
+        alert('The channel name cannot be empty');
+        return;
+    }
+
+    if (selectedUsers.value.length === 0) {
+        alert('Please select at least one user');
+        return;
+    }
 
     try {
-        console.log(selectedMembers.value)
-        await chatStore.createNewChannel(channelName.value, selectedMembers.value);
+        const userIds = selectedUsers.value.map(userId => {
+            return userId;
+        });
+
+        sendCreateChannelRequest(channelName.value, 'custom', userIds);
+
         channelName.value = '';
+        selectedUsers.value = [];
         closeModal();
     } catch (error) {
-        console.error('Ошибка при создании канала:', error);
+        console.error('Error when creating a channel:', error);
     }
+}
+
+function handleChannelItemClick(channel: Channel) {
+    const newParticipants = channel.users
+        ? channel.users.map(user => ({
+            name: user.name,
+            avatarUrl: user.avatarUrl || '',
+        }))
+        : [];
+
+    headerStore.setTitle(channel.name);
+    participantsStore.setParticipants(newParticipants);
+    setActiveItem('channel', channel.id);
 }
 </script>
 

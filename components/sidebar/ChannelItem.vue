@@ -1,19 +1,23 @@
 <template>
     <div
-        class="channel-item flex"
         :class="{ 'channel-item--active': props.isActive }"
-        @click="$emit('click')"
+        class="channel-item flex"
     >
         <div class="channel-item__name">
-            # {{ name }}
+            # {{ channel.name }}
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import type {ChannelItemProps} from "~/types/ChannelItemProps";
-
-const props = defineProps<ChannelItemProps & { isActive?: boolean }>();
+const props = defineProps<{
+    channel: {
+        id: string;
+        name: string;
+        type: string;
+    };
+    isActive?: boolean
+}>();
 </script>
 
 <style scoped lang="scss">

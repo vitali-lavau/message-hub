@@ -1,32 +1,21 @@
 <template>
-    <Sidebar
-        :activeChannelId="activeChannelId"
-        :activeMessageId="activeMessageId"
-        @setActiveChannel="setActiveChannel"
-        @setActiveMessage="setActiveMessage"
-    />
-    <MessagePanel
-        class="flex-1"
-        :activeChannelId="activeChannelId"
-        :activeMessageId="activeMessageId"
-    />
+    <Sidebar/>
+    <MessagePanel class="flex-1"/>
 </template>
 
 <script setup lang="ts">
+import Sidebar from "~/components/sidebar/Sidebar.vue";
 import MessagePanel from "~/components/messagePanel/MessagePanel.vue";
+import { fetchUserChannels } from "~/api/channels";
 
-const activeChannelId = ref<number | null>(null);
-const activeMessageId = ref<number | null>(null);
-
-function setActiveChannel(id: number) {
-    activeChannelId.value = id;
-    activeMessageId.value = null;
-}
-
-function setActiveMessage(id: number) {
-    activeMessageId.value = id;
-    activeChannelId.value = null;
-}
+onMounted(async () => {
+    try {
+        const channels = await fetchUserChannels();
+        console.log("Полученные каналы:", channels);
+    } catch (error) {
+        console.error("Ошибка при загрузке каналов:", error);
+    }
+});
 </script>
 
 <style scoped lang="scss">

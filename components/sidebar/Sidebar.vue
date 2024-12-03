@@ -1,17 +1,17 @@
 <template>
     <aside class="sidebar flex flex-col">
-        <UserSearch @updateSearch="updateSearchQuery"/>
+        <UserSearch @updateSearch="updateSearchQuery" />
         <ChannelsList
-            class="section flex flex-col"
             :searchQuery="searchQuery"
             :activeItem="activeItem"
             @setActiveItem="setActiveItem"
+            class="section flex flex-col"
         />
         <DirectMessages
-            class="section flex flex-col"
             :searchQuery="searchQuery"
             :activeItem="activeItem"
             @setActiveItem="setActiveItem"
+            class="section flex flex-col"
         />
     </aside>
 </template>
@@ -20,16 +20,27 @@
 import UserSearch from "~/components/sidebar/UserSearch.vue";
 import ChannelsList from "~/components/sidebar/ChannelsList.vue";
 import DirectMessages from "~/components/sidebar/DirectMessages.vue";
+import { useMessagesStore } from '~/stores/messagesStore';
 
 const searchQuery = ref('');
 const activeItem = ref<{ type: 'channel' | 'directMessage'; id: string | number } | null>(null);
+const messagesStore = useMessagesStore();
 
 function updateSearchQuery(query: string) {
     searchQuery.value = query;
 }
 
-function setActiveItem(type: 'channel' | 'directMessage', id: string | number) {
+async function setActiveItem(type: 'channel' | 'directMessage', id: string | number) {
     activeItem.value = { type, id };
+    if (type === 'channel') {
+        messagesStore.setCurrentChannel(id.toString());
+        console.log(`Выбран канал: ${id}`);
+        await messagesStore.loadMessages(id.toString());
+    } else if (type === 'directMessage') {
+        messagesStore.setCurrentChannel(id.toString());
+        console.log(`Выбрана директ-сообщение: ${id}`);
+        await messagesStore.loadMessages(id.toString());
+    }
 }
 </script>
 

@@ -1,30 +1,11 @@
-<template xmlns="">
+<template>
     <div class="message-input">
-        <FileUploader
-            :showButtonAttach="false"
-            ref="fileUploader"
-            @filesChanged="handleFilesChanged"
-        />
         <div class="message-input__inner">
-            <ButtonAttach @click="openFileUploader"/>
-            <client-only>
-                <Transition>
-                    <emoji-picker
-                        v-if="isEmoji"
-                        @emoji-click="addEmojiToEditor"
-                        class="emoji-picker"
-                    />
-                </Transition>
-            </client-only>
             <EditorContent
                 v-if="editor"
                 :editor="editor"
                 class="editor"
                 @keydown="handleKeydown"
-            />
-            <ButtonSmile
-                @click="toggleEmoji"
-                class="message-input__emoji"
             />
             <ButtonPrimary
                 :disabled="isSendDisabled"
@@ -37,27 +18,21 @@
 </template>
 
 <script setup lang="ts">
-import {Editor, EditorContent} from '@tiptap/vue-3';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { Editor, EditorContent } from '@tiptap/vue-3';
 import StarterKit from '@tiptap/starter-kit';
-import ButtonPrimary from "~/components/ui/ButtonPrimary.vue";
 import Placeholder from '@tiptap/extension-placeholder';
-import FileUploader from "~/components/ui/FileUploader.vue";
-import ButtonAttach from "~/components/ui/ButtonAttach.vue";
-import type {UploadedFile} from "~/types/UploadedFile";
-import ButtonSmile from "~/components/ui/ButtonSmile.vue";
-import { useChatStore } from '~/stores/chatStore';
+import ButtonPrimary from '~/components/ui/ButtonPrimary.vue';
+import { sendMessage as sendSocketMessage } from '~/services/socketAuthService';
+import { useMessagesStore } from '~/stores/messagesStore';
 import { useUserStore } from '~/stores/userStore';
 
-const chatStore = useChatStore();
-const userStore = useUserStore();
 const editor = ref<Editor>();
-const fileUploader = ref<InstanceType<typeof FileUploader> | null>(null);
-const attachedFiles = ref<UploadedFile[]>([]);
-const isEmoji = ref(false);
+const messagesStore = useMessagesStore();
+const isSendDisabled = computed(() => !editor.value?.getText().trim());
+const userStore = useUserStore();
 
-onMounted(async () => {
-    await import('emoji-picker-element');
-
+onMounted(() => {
     editor.value = new Editor({
         extensions: [
             StarterKit,
@@ -73,53 +48,30 @@ onBeforeUnmount(() => {
     editor.value?.destroy();
 });
 
-function sendMessage() {
-    if (editor.value) {
-        const plainText = editor.value.getText();
+const sendMessage = () => {
+    if (!editor.value) return;
 
-        if (plainText.trim()) {
-            // Проверяем, активен ли чат с ботом
-            if (chatStore.activeChatId === chatStore.botChatId) {
-                chatStore.sendMessageToBot(plainText); // Отправляем сообщение боту
-            } else {
-                chatStore.addMessage(plainText, attachedFiles.value, userStore.user.name);
-            }
+    const messageContent = editor.value.getText().trim();
+    const channelId = messagesStore.currentChannelId;
+    const currentUser = userStore.user;
 
-            editor.value.commands.clearContent();
-            attachedFiles.value = [];
-            fileUploader.value?.clearFiles();
-        }
+    if (!currentUser) {
+        console.error('Текущий пользователь не найден!');
+        return;
     }
-}
 
-function handleFilesChanged(files: UploadedFile[]) {
-    attachedFiles.value = files;
-}
+    if (messageContent && channelId) {
+        sendSocketMessage(channelId, messageContent);
+        editor.value.commands.clearContent();
+    }
+};
 
-function handleKeydown(event: KeyboardEvent) {
+const handleKeydown = (event: KeyboardEvent) => {
     if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
         sendMessage();
     }
-}
-
-function openFileUploader() {
-    fileUploader.value?.triggerFileSelect();
-}
-
-function addEmojiToEditor(event: CustomEvent) {
-    const emoji = event.detail.unicode;
-    editor.value?.commands.insertContent(emoji);
-}
-
-const isSendDisabled = computed(() => {
-    const messageContent = editor.value?.getText().trim();
-    return !messageContent && attachedFiles.value.length === 0;
-});
-
-function toggleEmoji() {
-    isEmoji.value = !isEmoji.value;
-}
+};
 </script>
 
 <style lang="scss">

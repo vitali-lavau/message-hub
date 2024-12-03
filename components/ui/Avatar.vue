@@ -53,6 +53,7 @@ const initials = computed(() => {
         color: $color-white;
         line-height: 2.2;
         text-align: center;
+        text-transform: uppercase;
     }
 }
 </style>

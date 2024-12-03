@@ -1,47 +1,19 @@
 <template>
     <div :class="['message-item', isMine ? 'message-item--right' : 'message-item--left']">
         <Avatar
-            :name="message.sender"
-            :imageUrl="message.avatarUrl"
+            :name="message.user.name"
+            :imageUrl="message.user.avatarUrl"
             class="message-item__avatar"
         />
         <div class="message-item__inner">
             <div class="message-item__header flex items-center">
-                <span class="message-item__sender">{{ message.sender }}</span>
-                <span class="message-item__timestamp">{{ formatDateTime(message.timestamp) }}</span>
+                <span class="message-item__sender">{{ message.user.name }}</span>
+                <span class="message-item__timestamp">{{ formatDateTime(message.createdAt) }}</span>
             </div>
 
-            <div class="message-item__content" @dblclick="enableEdit">
-                <template v-if="isEditing">
-                    <input
-                        v-model="editableContent"
-                        @blur="saveEdit"
-                        @keyup.enter="saveEdit"
-                        type="text"
-                        class="message-item__input"
-                        autofocus
-                    />
-                </template>
-                <template v-else>
-                    {{ message.content }}
-                </template>
+            <div class="message-item__content">
+                {{ message.text }}
             </div>
-
-            <div class="message-item__reactions flex items-center">
-                <ReactionButton
-                    v-for="(count, emoji) in message.reactions"
-                    :key="emoji"
-                    :emoji="emoji as string"
-                    :count="count"
-                    @click="increaseReaction(emoji as string)"
-                />
-            </div>
-
-            <MessageActions
-                @edit="enableEdit"
-                @delete="handleDelete"
-                class="flex flex-col"
-            />
         </div>
     </div>
 </template>
@@ -49,9 +21,7 @@
 <script setup lang="ts">
 import type {Message} from '~/types/Message';
 import Avatar from "~/components/ui/Avatar.vue";
-import {formatDateTime} from "~/utils/formatDateTime";
-import MessageActions from "~/components/messagePanel/MessageActions.vue";
-import ReactionButton from "~/components/ui/ReactionButton.vue";
+import { formatDateTime } from "~/utils/formatDateTime";
 
 const props = defineProps<{
     message: Message;
@@ -60,37 +30,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['editMessage', 'deleteMessage']);
 
-const isMine = computed(() => props.message.sender === props.currentUser);
-const isEditing = ref(false);
-const editableContent = ref(props.message.content);
-
-const enableEdit = () => {
-    isEditing.value = true;
-    editableContent.value = props.message.content;
-};
-
-const saveEdit = () => {
-    if (editableContent.value !== props.message.content) {
-        const updatedMessage = {
-            ...props.message,
-            content: editableContent.value
-        };
-        emit('editMessage', updatedMessage);
-    }
-    isEditing.value = false;
-};
-
-const handleDelete = () => {
-    emit('deleteMessage', props.message);
-};
-
-const increaseReaction = (emoji: string) => {
-    if (props.message.reactions[emoji] != undefined) {
-        props.message.reactions[emoji]++;
-    } else {
-        props.message.reactions[emoji] = 1;
-    }
-};
+const isMine = computed(() => props.message.user.name === props.currentUser);
 </script>
 
 <style scoped lang="scss">

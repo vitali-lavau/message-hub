@@ -1,9 +1,15 @@
 export interface Message {
-    id: number;
-    sender: string;
-    content: string;
-    timestamp: Date | string;
-    avatarUrl: string;
-    reactions: Record<string, number>;
-    chatId: number;
+    id: string;
+    text: string;
+    createdAt: string;
+    created_at?: string;
+    user: {
+        id: string;
+        name: string;
+        avatarUrl: string;
+    };
+    files: Array<any>;
+    reactions: Array<any>;
+    channelId: string;
+    edited: boolean;
 }

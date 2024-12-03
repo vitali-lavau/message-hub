@@ -1,7 +1,7 @@
 import type {DirectMessageItemProps} from '~/types/DirectMessageItemProps';
 
 export const messagesForUser1: DirectMessageItemProps[] = [
-    {id: 9999, name: "Emily Clark", imageUrl: "/images/users/emily.png", unreadCount: 3, chatId: 1},
+    {id: 1, name: "Emily Clark", imageUrl: "/images/users/emily.png", unreadCount: 3, chatId: 1},
     {id: 2, name: "James Anderson", imageUrl: "/images/users/james.png", chatId: 2},
     {id: 3, name: "Sophia Turner", imageUrl: "/images/users/sophia.png", chatId: 3},
     {id: 4, name: "Liam Wilson", imageUrl: "", chatId: 4},

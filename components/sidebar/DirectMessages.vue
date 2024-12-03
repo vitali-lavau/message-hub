@@ -6,17 +6,16 @@
         </div>
 
         <div class="direct-messages__list">
-            <DirectMessageItem
-                v-for="message in chatStore.filteredAndSortedContacts"
-                :key="message.id"
-                :id="message.id"
-                :name="message.name"
-                :imageUrl="message.imageUrl"
-                :unreadCount="message.unreadCount"
-                :chatId="message.chatId"
-                :isActive="activeItem?.type === 'directMessage' && activeItem?.id === message.id"
-                @click="setActiveItem('directMessage', message.id)"
-            />
+            <client-only>
+                <DirectMessageItem
+                    v-for="direct in filteredDirects"
+                    :key="direct.id"
+                    :name="direct.name"
+                    :imageUrl="direct.imageUrl"
+                    :isActive="activeItem?.type === 'directMessage' && activeItem?.id === direct.id"
+                    @click="handleDirectMessageClick(direct)"
+                />
+            </client-only>
         </div>
 
         <ModalBase
@@ -40,25 +39,22 @@
 </template>
 
 <script setup lang="ts">
+import {useDirectsStore} from "~/stores/directsStore";
+import {useHeaderStore} from "~/stores/useHeaderStore";
 import DirectMessageItem from "~/components/sidebar/DirectMessageItem.vue";
 import ButtonAddDirectMessage from "~/components/ui/ButtonAddDirectMessage.vue";
-import {useChatStore} from "~/stores/chatStore";
 import ModalBase from "~/components/modals/ModalBase.vue";
-import ButtonBase from "~/components/ui/ButtonBase.vue";
 import WriteTo from "~/components/modals/WriteTo.vue";
-
-const chatStore = useChatStore();
-const isModalOpen = ref(false);
-
-onMounted(() => {
-    chatStore.loadUserMessages();
-    chatStore.loadUserChannels();
-});
+import ButtonBase from "~/components/ui/ButtonBase.vue";
 
 const props = defineProps<{
     searchQuery: string;
     activeItem: { type: string; id: string | number } | null;
 }>();
+const directsStore = useDirectsStore();
+const directs = computed(() => directsStore.directs);
+const isModalOpen = ref(false);
+const headerStore = useHeaderStore();
 
 const emit = defineEmits<{
     (e: 'setActiveItem', type: 'directMessage', id: string | number): void;
@@ -66,19 +62,13 @@ const emit = defineEmits<{
 
 function setActiveItem(type: 'directMessage', id: string | number) {
     emit('setActiveItem', type, id);
-
-    chatStore.setActiveChat(Number(id));
-    chatStore.setActiveUser(Number(id));
-    console.log("История сообщений для чата:", chatStore.activeMessages);
 }
 
-watch(
-    () => props.searchQuery,
-    (newQuery) => {
-        chatStore.setSearchQuery(newQuery)
-    },
-    { immediate: true }
-)
+const filteredDirects = computed(() => {
+    return directs.value.filter(direct =>
+        direct.name.toLowerCase().includes(props.searchQuery.toLowerCase())
+    );
+});
 
 function openModal() {
     isModalOpen.value = true;
@@ -86,6 +76,11 @@ function openModal() {
 
 function closeModal() {
     isModalOpen.value = false;
+}
+
+function handleDirectMessageClick(direct: { id: string | number; name: string }) {
+    headerStore.setTitle(direct.name);
+    setActiveItem('directMessage', direct.id);
 }
 </script>
 

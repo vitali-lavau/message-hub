@@ -8,16 +8,8 @@
         @click="toggleSelection"
     >
         <Avatar :name="name" :imageUrl="imageUrl"/>
-        <div
-            class="direct-message-item__name"
-            :style="{ paddingRight: unreadCount ? '32px' : '' }"
-        >
+        <div class="direct-message-item__name">
             {{ name }}
-
-            <div v-if="unreadCount" class="direct-message-item__unread">
-                {{ unreadCount }}
-            </div>
-
             <div v-if="isIcon" class="direct-message-item__icon">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect width="20" height="20" rx="10" fill="#1E2EB7"/>
@@ -32,19 +24,19 @@
 
 <script setup lang="ts">
 import Avatar from "~/components/ui/Avatar.vue";
-import type {DirectMessageItemProps} from "~/types/DirectMessageItemProps";
 
-const props = defineProps<DirectMessageItemProps & {
-    isActive?: boolean;
+const props = defineProps<{
+    name: string;
+    imageUrl?: string;
+    isSelected?: boolean;
     isIcon?: boolean;
+    isActive?: boolean;
 }>();
 
-const emit = defineEmits(['toggle-select']);
-const isSelected = ref(false);
+const emit = defineEmits(['update:selected']);
 
 function toggleSelection() {
-    isSelected.value = !isSelected.value;
-    emit('toggle-select', props.id, isSelected.value);
+    emit('update:selected');
 }
 </script>
 
@@ -122,6 +114,9 @@ function toggleSelection() {
     }
 
     &.direct-message-item--selected {
+        .direct-message-item__name {
+            background-color: $color-info;
+        }
 
         .direct-message-item__icon {
             visibility: visible;

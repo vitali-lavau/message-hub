@@ -26,5 +26,12 @@ export default defineNuxtConfig({
         compilerOptions: {
             isCustomElement: (tag) => tag === 'emoji-picker'
         }
-    }
+    },
+    runtimeConfig: {
+        public: {
+            wsServerUrl: process.env.WS_SERVER_URL || 'ws://127.0.0.1:8090',
+            baseApiUrl: process.env.BASE_API_URL || 'http://127.0.0.1:80',
+            userToken: process.env.USER_TOKEN || '',
+        },
+    },
 })

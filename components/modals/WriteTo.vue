@@ -13,18 +13,17 @@
                 :id="message.id"
                 :name="message.name"
                 :imageUrl="message.imageUrl"
-                :chatId="message.chatId"
             />
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import {useDirectsStore} from "~/stores/directsStore";
 import UserSearch from "~/components/sidebar/UserSearch.vue";
 import DirectMessageItem from "~/components/sidebar/DirectMessageItem.vue";
-import {useChatStore} from "~/stores/chatStore";
 
-const chatStore = useChatStore();
+const chatStore = useDirectsStore();
 const searchQuery = ref('');
 
 function updateSearchQuery(query: string) {
@@ -32,8 +31,8 @@ function updateSearchQuery(query: string) {
 }
 
 const filteredMessages = computed(() => {
-    return chatStore.contacts.filter(contact =>
-        contact.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    return chatStore.directs.filter(direct =>
+        direct.name.toLowerCase().includes(searchQuery.value.toLowerCase())
     );
 });
 </script>
