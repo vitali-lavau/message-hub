@@ -2,57 +2,61 @@
     <div class="add-members">
         <div class="add-members__title">Add Members</div>
         <UserSearch
-            @updateSearch="updateSearchQuery"
             class="add-members__search"
+            @updateSearch="updateSearchQuery"
+            placeholder="Type name..."
         />
 
         <div class="add-members__list">
-            <DirectMessageItem
-                v-for="message in filteredMessages"
-                :key="message.id"
-                :id="message.id"
-                :name="message.name"
-                :imageUrl="message.imageUrl"
-                :chatId="message.chatId"
-                :isIcon="true"
-                @toggle-select="toggleSelect"
-                :isActive="selectedItems.includes(message.id)"
-            />
+            <client-only>
+                <DirectMessageItem
+                    v-for="direct in filteredDirects"
+                    :key="direct.id"
+                    :name="direct.name"
+                    :imageUrl="direct.imageUrl"
+                    :isIcon="true"
+                    :isSelected="selectedDirects.includes(direct.id)"
+                    @update:selected="toggleSelection(direct.id)"
+                />
+            </client-only>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue';
+import {useDirectsStore} from "~/stores/directsStore";
 import UserSearch from "~/components/sidebar/UserSearch.vue";
 import DirectMessageItem from "~/components/sidebar/DirectMessageItem.vue";
-import {useChatStore} from "~/stores/chatStore";
 
-const chatStore = useChatStore();
+const directsStore = useDirectsStore();
+const directs = computed(() => directsStore.directs);
 const searchQuery = ref('');
-const selectedItems = ref<number[]>([]);
-const emit = defineEmits<{
-    (event: 'update:selected-items', items: number[]): void;
-}>();
+const selectedDirects = ref<string[]>([]);
+const emit = defineEmits(['updateSelectedUsers']);
 
-function updateSearchQuery(query: string) {
-    searchQuery.value = query;
+function updateSearchQuery(value: string) {
+    searchQuery.value = value;
 }
 
-const filteredMessages = computed(() => {
-    return chatStore.contacts.filter(contact =>
-        contact.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-    );
-});
+const filteredDirects = computed(() =>
+    directs.value.filter(direct =>
+        direct.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    )
+);
 
-function toggleSelect(id: number, isSelected: boolean) {
-    if (isSelected) {
-        if (!selectedItems.value.includes(id)) {
-            selectedItems.value.push(id);
-        }
+function toggleSelection(id: string) {
+    const index = selectedDirects.value.indexOf(id);
+    if (index === -1) {
+        selectedDirects.value.push(id);
     } else {
-        selectedItems.value = selectedItems.value.filter(itemId => itemId !== id);
+        selectedDirects.value.splice(index, 1);
     }
-    emit('update:selected-items', selectedItems.value);
+    emitSelectedDirects();
+}
+
+function emitSelectedDirects() {
+    emit('updateSelectedUsers', selectedDirects.value);
 }
 </script>
 

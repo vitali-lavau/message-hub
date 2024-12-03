@@ -1,67 +1,62 @@
 <template>
     <div class="message-list flex items-center justify-center flex-1">
-        <p v-if="!messages.length" class="message-list__empty">No messages yet...</p>
+        <client-only>
+            <p v-if="!messages.length" class="message-list__empty">No messages yet...</p>
 
-        <DynamicScroller
-            v-else
-            :items="messagesWithSeparators"
-            :key-field="'id'"
-            class="message-list__scroller flex-1"
-            :min-item-size="60"
-        >
-            <template #default="{ item, index, active }">
-                <transition
-                    name="fade"
-                    mode="out-in"
-                    appear
-                >
-                    <DynamicScrollerItem
-                        :item="item"
-                        :index="index"
-                        :active="active"
+            <DynamicScroller
+                v-else
+                :items="messagesWithSeparators"
+                :key-field="'id'"
+                class="message-list__scroller flex-1"
+                :min-item-size="60"
+            >
+                <template #default="{ item, index, active }">
+                    <transition
+                        name="fade"
+                        mode="out-in"
+                        appear
                     >
-                        <component
-                            :is="item.type"
-                            v-bind="item.props"
-                            @editMessage="onEditMessage"
-                            @deleteMessage="onDeleteMessage"
-                            :class="{ 'deleting': item.isDeleting }"
-                        />
-                    </DynamicScrollerItem>
-                </transition>
-            </template>
-        </DynamicScroller>
+                        <DynamicScrollerItem
+                            :item="item"
+                            :index="index"
+                            :active="active"
+                        >
+                            <component
+                                :is="item.type"
+                                v-bind="item.props"
+                            />
+                        </DynamicScrollerItem>
+                    </transition>
+                </template>
+            </DynamicScroller>
+        </client-only>
     </div>
 </template>
 
 <script setup lang="ts">
-import {DynamicScroller, DynamicScrollerItem} from 'vue-virtual-scroller';
+import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller';
 import MessageItem from './MessageItem.vue';
 import DateSeparator from "~/components/ui/DateSeparator.vue";
-import type {Message} from "~/types/Message";
+import type { Message } from "~/types/Message";
 import type { MessageItemWithSeparator } from '~/types/MessageItemWithSeparator';
-import { useChatStore } from '~/stores/chatStore';
-
-const userStore = useUserStore();
-const chatStore = useChatStore();
-const currentUser = userStore.user;
 
 const props = defineProps<{
-    messages: Message[];
+    messages: Array<Message>;
+    currentUser: { name: string };
 }>();
 
 const messagesWithSeparators = computed((): MessageItemWithSeparator[] => {
     const items: MessageItemWithSeparator[] = [];
     let lastDate: string | null = null;
 
-    chatStore.activeMessages.forEach((message) => {
-        const messageDate = new Date(message.timestamp).toDateString();
+    props.messages.forEach((message: Message) => {
+        const messageDate = new Date(message.createdAt).toDateString();
 
         if (lastDate !== messageDate) {
             items.push({
                 id: `separator-${messageDate}`,
                 type: DateSeparator,
-                props: { date: new Date(message.timestamp) }
+                props: { date: new Date(message.createdAt) }
             });
             lastDate = messageDate;
         }
@@ -69,35 +64,12 @@ const messagesWithSeparators = computed((): MessageItemWithSeparator[] => {
         items.push({
             id: message.id,
             type: MessageItem,
-            props: { message, currentUser: currentUser.name },
-            isDeleting: false
+            props: { message, currentUser: props.currentUser.name }
         });
     });
 
     return items;
 });
-
-const onEditMessage = (updatedMessage: Message) => {
-    const index = props.messages.findIndex((msg) => msg.id === updatedMessage.id);
-    if (index !== -1) {
-        props.messages[index] = updatedMessage;
-        chatStore.editMessage(updatedMessage);
-    }
-};
-
-const onDeleteMessage = (message: Message) => {
-    const item = messagesWithSeparators.value.find(m => m.id === message.id);
-    if (item) {
-        item.isDeleting = true;
-
-        setTimeout(() => {
-            const index = props.messages.findIndex(m => m.id === message.id);
-            if (index !== -1) {
-                props.messages.splice(index, 1);
-            }
-        }, 500);
-    }
-};
 </script>
 
 <style scoped lang="scss">

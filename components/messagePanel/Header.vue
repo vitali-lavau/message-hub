@@ -1,19 +1,22 @@
 <template>
     <div class="message-header flex justify-between items-center">
         <div class="message-header__title">{{ title }}</div>
-        <ChannelMembers v-if="members && members.length" :members="members" />
+        <ChannelMembers v-if="participants && participants.length" :members="participants" />
         <DropdownMembers/>
     </div>
 </template>
 
 <script setup lang="ts">
-import ChannelMembers from "~/components/messagePanel/ChannelMembers.vue";
+import {useHeaderStore} from "~/stores/useHeaderStore";
+import {useParticipantsStore} from "~/stores/useParticipants";
 import DropdownMembers from "~/components/ui/DropdownMembers.vue";
+import ChannelMembers from "~/components/messagePanel/ChannelMembers.vue";
 
-defineProps<{
-    title: string;
-    members?: { name: string; avatarUrl: string }[];
-}>();
+const headerStore = useHeaderStore();
+const participantsStore = useParticipantsStore();
+
+const title = computed(() => headerStore.title);
+const participants = computed(() => participantsStore.participants);
 </script>
 
 <style lang="scss">
