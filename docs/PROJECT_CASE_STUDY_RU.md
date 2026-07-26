@@ -13,6 +13,8 @@
 | Интеграции                | Локальный mock API и детерминированный mock-бот      |
 | Backend                   | Не требуется для запуска демо                        |
 | Секреты и API-ключи       | Не требуются                                         |
+| Live demo                 | https://message-hub-psi.vercel.app/                  |
+| Исходный код              | https://github.com/vitali-lavau/message-hub          |
 
 ## Краткое описание
 
@@ -312,6 +314,7 @@ types/
 -   UX для loading, empty, error, retry и success;
 -   безопасную замену внешней интеграции;
 -   умение подготовить legacy-проект к публичной демонстрации.
+-   публичную portfolio-публикацию на Vercel.
 
 ## Короткий рассказ для собеседования
 
@@ -326,7 +329,7 @@ types/
 -   систему с серверной авторизацией;
 -   реальное файловое хранилище;
 -   интеграцию с настоящим AI API;
--   проект с настроенным CI/CD, пока pipeline не добавлен.
+-   проект с автоматизированным CI pipeline, пока GitHub Actions workflow не добавлен.
 
 Корректная формулировка: **frontend-only messenger demo with an asynchronous mock API and local persistence**.
 
@@ -367,3 +370,14 @@ types/
 E2E покрывают открытие direct-чата и отправку сообщения, создание канала, переключение
 mock-пользователя, сохранение после reload и восстановление seed через **Reset demo data**.
 Подробное описание находится в [QUALITY_STAGE_8_RU.md](./QUALITY_STAGE_8_RU.md).
+
+## Этап 9: публикация для рекрутера
+
+Portfolio-версия опубликована и доступна без регистрации:
+
+-   [Live demo на Vercel](https://message-hub-psi.vercel.app/);
+-   [публичный GitHub-репозиторий](https://github.com/vitali-lavau/message-hub).
+
+README содержит описание проекта, стек, архитектуру, инструкции запуска, ограничения и
+desktop/mobile скриншоты. Live demo проверено на desktop и mobile viewport 390 px: приложение
+загружается без console errors, а горизонтальное переполнение отсутствует.

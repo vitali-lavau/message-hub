@@ -7,6 +7,7 @@
         />
         <div class="message-input__inner">
             <ButtonAttach @click="openFileUploader" />
+            <EditorContent v-if="editor" :editor="editor" class="editor" @keydown="handleKeydown" />
             <div
                 ref="emojiMenu"
                 class="message-input__emoji-menu"
@@ -26,7 +27,6 @@
                     <ButtonSmile :aria-expanded="isEmoji" aria-label="Choose emoji" />
                 </span>
             </div>
-            <EditorContent v-if="editor" :editor="editor" class="editor" @keydown="handleKeydown" />
             <ButtonPrimary
                 :disabled="isSendDisabled"
                 :label="isSending ? 'Sending…' : 'Send'"
@@ -168,26 +168,37 @@ function handleDocumentPointerDown(event: PointerEvent) {
 
 .message-input {
     flex-shrink: 0;
-    padding: $spacing-lg $spacing-xl;
+    padding: $spacing-md $spacing-lg $spacing-lg;
 
     &__inner {
         position: relative;
+        display: grid;
+        grid-template-columns: 40px minmax(0, 1fr) 40px auto;
+        align-items: center;
+        gap: $spacing-xs;
+        padding: 6px;
+        background: $color-background-gray;
+        border: 1px solid transparent;
+        border-radius: 14px;
+        transition:
+            background-color 0.2s ease,
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
 
-        .attach-button {
-            position: absolute;
-            top: 50%;
-            left: $spacing-lg;
-            z-index: 1;
-            transform: translateY(-50%);
+        &:focus-within {
+            background: $color-white;
+            border-color: rgba($color-primary, 0.65);
+            box-shadow: 0 0 0 3px rgba($color-primary, 0.12);
         }
     }
 
     &__send {
-        position: absolute;
-        top: 50%;
-        right: $spacing-xl;
-        width: 110px;
-        transform: translateY(-50%);
+        width: 96px;
+        min-height: 40px;
+        padding: $spacing-sm $spacing-md;
+        border-radius: 10px;
+        font-size: $font-size-sm;
+        font-weight: $font-weight-semibold;
 
         &:disabled {
             color: $color-gray-second;
@@ -198,11 +209,12 @@ function handleDocumentPointerDown(event: PointerEvent) {
     }
 
     &__emoji-menu {
-        position: absolute;
-        top: 50%;
-        right: 166px;
+        position: relative;
         z-index: 1;
-        transform: translateY(-50%);
+        width: 40px;
+        height: 40px;
+        display: grid;
+        place-items: center;
 
         .emoji-picker {
             position: absolute;
@@ -217,8 +229,8 @@ function handleDocumentPointerDown(event: PointerEvent) {
     }
 
     &__emoji {
-        width: $spacing-lg;
-        height: $spacing-lg;
+        width: 40px;
+        height: 40px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -255,33 +267,37 @@ function handleDocumentPointerDown(event: PointerEvent) {
     }
 
     .file-uploader {
-        margin: 0 0 $spacing-m;
+        margin: 0;
+
+        &:has(.file-uploader__error, .file-uploader__hint, .file-uploader__previews) {
+            margin-bottom: $spacing-m;
+        }
+    }
+
+    :where(.attach-button, .btn-smile, .message-input__send):focus-visible {
+        outline: 2px solid $color-primary;
+        outline-offset: -2px;
     }
 }
 
 .editor {
+    min-width: 0;
     width: 100%;
-    padding: $spacing-m $spacing-xl $spacing-m $spacing-xxl;
-    background-color: $color-background-gray;
-    border-radius: 6px;
+    background: transparent;
 
     .ProseMirror {
-        max-width: 85%;
+        width: 100%;
+        min-height: 40px;
         max-height: 140px;
-        padding: $spacing-sm;
+        padding: 9px $spacing-xs;
         color: $color-secondary;
         font-size: $font-size-base;
-        line-height: $line-height-lg;
+        line-height: 22px;
         outline: none;
         border: none;
         overflow-y: auto;
         overflow-wrap: anywhere;
         white-space: pre-wrap;
-
-        &:focus-visible {
-            outline: 3px solid $color-primary;
-            outline-offset: 2px;
-        }
 
         p[data-placeholder] {
             position: relative;
@@ -308,7 +324,7 @@ function handleDocumentPointerDown(event: PointerEvent) {
 
 @media (max-width: 1023px) {
     .message-input {
-        padding: $spacing-lg;
+        padding: $spacing-md;
     }
 }
 
@@ -317,9 +333,7 @@ function handleDocumentPointerDown(event: PointerEvent) {
         padding: $spacing-sm $spacing-m calc(#{$spacing-m} + env(safe-area-inset-bottom));
 
         &__inner {
-            display: grid;
             grid-template-columns: 32px minmax(0, 1fr) 32px auto;
-            align-items: center;
             gap: 2px;
             padding: 3px 4px;
             background: $color-white;
@@ -327,20 +341,25 @@ function handleDocumentPointerDown(event: PointerEvent) {
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0, 30, 80, 0.06);
 
+            &:focus-within {
+                border-color: rgba($color-primary, 0.65);
+                box-shadow:
+                    0 0 0 3px rgba($color-primary, 0.1),
+                    0 2px 8px rgba(0, 30, 80, 0.06);
+            }
+
             .attach-button {
-                position: static;
                 width: 32px;
                 height: 36px;
-                grid-column: 1;
-                grid-row: 1;
-                transform: none;
+            }
+
+            .btn-smile {
+                width: 32px;
+                height: 36px;
             }
         }
 
         &__send {
-            position: static;
-            grid-column: 4;
-            grid-row: 1;
             width: auto;
             min-width: 68px;
             min-height: 36px;
@@ -348,18 +367,11 @@ function handleDocumentPointerDown(event: PointerEvent) {
             padding: $spacing-sm $spacing-m;
             font-size: $font-size-sm;
             border-radius: 10px;
-            transform: none;
         }
 
         &__emoji-menu {
-            position: static;
-            grid-column: 3;
-            grid-row: 1;
             width: 32px;
             height: 36px;
-            display: grid;
-            place-items: center;
-            transform: none;
 
             .emoji-picker {
                 position: fixed;
@@ -381,14 +393,7 @@ function handleDocumentPointerDown(event: PointerEvent) {
     }
 
     .editor {
-        min-width: 0;
-        grid-column: 2;
-        grid-row: 1;
-        padding: 0;
-        background: transparent;
-
         .ProseMirror {
-            max-width: 100%;
             min-height: 36px;
             max-height: 112px;
             padding: $spacing-sm $spacing-xs;

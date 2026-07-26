@@ -1,7 +1,13 @@
 {
     "name": "message-hub-frontend-demo",
+    "description": "A frontend-only corporate messenger portfolio demo built with Nuxt, Vue, TypeScript, and Pinia.",
     "private": true,
     "type": "module",
+    "homepage": "https://message-hub-psi.vercel.app/",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/vitali-lavau/message-hub.git"
+    },
     "engines": {
         "node": ">=20"
     },

@@ -1,8 +1,10 @@
-# git status
+# Message Hub
 
 Message Hub is a frontend-only corporate messenger demo built as a portfolio project. It focuses on a responsive chat experience, reusable Vue components, and client-side state management without requiring a backend.
 
 The application uses seeded demo data and a local mock bot, so it can be explored immediately after startup without API credentials or external services.
+
+**[Live demo](https://message-hub-psi.vercel.app/)** · **[GitHub repository](https://github.com/vitali-lavau/message-hub)**
 
 ## Screenshots
 

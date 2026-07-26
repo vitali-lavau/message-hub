@@ -105,7 +105,7 @@ Nuxt 3, Vue 3, TypeScript, Pinia, SCSS, Tailwind CSS, Tiptap, Headless UI, vue-v
 -   «Реализовал WebSocket real-time messaging»;
 -   «Настроил серверную авторизацию»;
 -   «Добавил production file upload»;
--   «Настроил CI/CD и production deployment».
+-   «Настроил CI/CD pipeline».
 
 После фактической реализации соответствующих возможностей этот список можно обновить.
 
@@ -139,3 +139,18 @@ Message Hub — адаптивное frontend-only демо корпоратив
 -   4 component-теста;
 -   7 Playwright E2E-сценариев;
 -   1 команда `npm run quality` для статических проверок, тестов и production build.
+
+## Дополнение после этапа 9
+
+### Ссылки
+
+-   Live demo: https://message-hub-psi.vercel.app/
+-   GitHub: https://github.com/vitali-lavau/message-hub
+
+### Bullet point для резюме на русском
+
+-   Подготовил и опубликовал автономное frontend-демо на Vercel с публичным GitHub-репозиторием, recruiter-ready README, desktop/mobile скриншотами и воспроизводимым quality pipeline.
+
+### Resume bullet in English
+
+-   Prepared and deployed a self-contained frontend demo on Vercel with a public GitHub repository, recruiter-ready documentation, desktop/mobile screenshots, and a reproducible quality pipeline.
