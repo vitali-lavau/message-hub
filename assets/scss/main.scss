@@ -1,0 +1,140 @@
+@use 'variables' as *;
+@use 'fonts' as *;
+@use 'animations';
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body,
+#__nuxt {
+    width: 100%;
+    min-width: 320px;
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: $font-family-base;
+    font-weight: $font-weight-normal;
+    font-size: $font-size-sm;
+    line-height: $line-height-base;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+input {
+    padding: $spacing-sm $spacing-md;
+    background-color: $color-background-gray;
+    border-radius: $border-radius-min;
+    font-size: $font-size-min;
+    color: $color-secondary;
+    line-height: $line-height-lg;
+    border: none;
+
+    &::placeholder {
+        color: $color-gray;
+    }
+}
+
+:where(button, a, input, select, textarea, [tabindex]):focus-visible {
+    outline: 3px solid $color-primary;
+    outline-offset: 2px;
+}
+
+.app {
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    min-width: 0;
+    display: flex;
+    padding: $spacing-lg $spacing-xl;
+    background-color: $color-background;
+}
+
+.subtitle {
+    margin: 0;
+    color: $color-text;
+    font-size: $font-size-max;
+    font-weight: $font-weight-semibold;
+}
+
+.img-responsive {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 2px;
+    background-color: $color-border;
+}
+
+::-webkit-scrollbar-track {
+    border-radius: 2px;
+    border: 1px solid $color-border;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition:
+        opacity 0.5s ease,
+        transform 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+@media (max-width: 1023px) {
+    .app {
+        padding: $spacing-md;
+    }
+}
+
+@media (max-width: 767px) {
+    html,
+    body,
+    #__nuxt {
+        min-width: 0;
+        background: $color-white;
+    }
+
+    .app {
+        width: 100vw;
+        padding: 0;
+        overflow: hidden;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
